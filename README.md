@@ -10,7 +10,7 @@ on a normal day, 10–20 sessions run in parallel across five project contexts. 
 failure mode isn't bad code — it's **lost work**: sessions crash mid-task, two sessions grab the
 same task, learnings evaporate at session end, and "I'll remember it" never survives to tomorrow.
 
-This repo is the operating system I built around that problem: **15 skills + 6 enforcement
+This repo is the operating system I built around that problem: two pillars — a **session-lifecycle** suite and a set of **harness-ops** tools — **19 skills + 6 enforcement
 hooks** that make sessions claim their work, checkpoint it, capture what they learned, and
 refuse to close until they've done so.
 
@@ -64,6 +64,15 @@ See [`CHAINS.md`](CHAINS.md) for the full close-session chain — the flagship o
 | [`close-asset-audit`](skills/close-asset-audit/SKILL.md) | Independent audit: did every built asset get registered? |
 | [`skill-forge`](skills/skill-forge/SKILL.md) | Turn a session's repeated pattern into a new skill (score-gated) |
 | [`sop-forge`](skills/sop-forge/SKILL.md) | Turn a session's workflow into a runnable SOP |
+
+### Harness ops (4)
+
+| Skill | What it does |
+|---|---|
+| [`che-mcp-audit`](skills/che-mcp-audit/SKILL.md) | Audit + prune your MCP surface: kill dead/duplicate servers, convert MCP → CLI where a CLI exists, remove plaintext secrets |
+| [`che-usage-stats`](skills/che-usage-stats/SKILL.md) | Real usage counts for skills / CLIs / MCP / subagents from local transcripts, plus an installed-but-never-used dead-weight report |
+| [`che-forge-agent`](skills/che-forge-agent/SKILL.md) | Author a new Claude Code subagent the proven way: skill-vs-agent gate → reuse-map → test → harden → wire |
+| [`che-safe-batch-write`](skills/che-safe-batch-write/SKILL.md) | Safe batch writes into any live CRM/DB: dry-run preview → sign-off → checkpointed execution → fetch-back verify |
 
 ### AI-ops tools (4)
 
