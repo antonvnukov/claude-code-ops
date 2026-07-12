@@ -1,0 +1,105 @@
+---
+name: che-forge-agent
+description: >-
+  Author a new Claude Code subagent (`~/.claude/agents/<name>.md`) the proven
+  way — reuse-map from a sibling, write the standard structure, then the
+  test→harden→stress→codify→wire arc that produced che-audit-delivery,
+  che-audit-qa, and che-prospect. Enforces the skill-vs-agent decision test
+  first (don't forge an agent when a skill is the right shape), and wires the 4
+  discoverability layers at the end. Use when Anton says "build an agent",
+  "author a subagent", "forge an agent for X", "turn this into an agent", or
+  when a session identifies orchestration/fan-out work that wants its own agent.
+  For a SKILL (not an agent), use skill-forge / skill-creator instead.
+---
+
+# che-forge-agent — Subagent Authoring Harness
+
+Codifies the arc that produced the first 3 self-authored agents. You build
+almost nothing net-new per agent: you reuse a proven sibling's structure, then
+run a disciplined test→harden→wire loop. **Exemplars to open and mirror:**
+`~/.claude/agents/che-audit-delivery.md` (opus orchestrator + parallel fan-out),
+`che-audit-qa.md` (read-only critic, no Write/Edit by design), `che-prospect.md`
+(batch fan-out, one lane per item). Roster + status: memory
+`project_authored_agents.md`.
+
+## Step 0 — Skill-vs-agent gate (do NOT skip)
+An agent is justified only when it owns at least one of these that a skill can't:
+- **Isolation** — needs its own tool allowlist / its own context (e.g. a
+  read-only critic that must not be able to Write).
+- **Parallelism** — it fans out independent lanes (one Task subagent per item).
+- **Delegation** — it's spawned by another agent/orchestrator as a unit.
+- **Judgment ownership** — it makes a call and owns an acceptance check, not just
+  a procedure.
+If none apply, STOP and forge a **skill** instead (`skill-forge`/`skill-creator`).
+my-agency *reporting* stays skills. Write one line stating which test it passes.
+
+## Step 1 — Reuse-map (pick the sibling, don't invent structure)
+Choose the closest exemplar and mirror its house style:
+- **Orchestrator + parallel fan-out** → mirror `che-audit-delivery` / `che-prospect`.
+- **Read-only critic / QA gate** → mirror `che-audit-qa` (tools: Read+Grep+Bash only).
+List, in a "reuse map" section, every existing skill/agent/MCP the new agent
+COMPOSES — the goal is "build almost nothing net-new; conduct + synthesize."
+
+## Step 2 — Write the .md (the standard structure)
+Frontmatter: `name` (matches file + `che-` prefix), `description` (with real
+trigger phrases — this is how it's auto-discovered), `model` (opus for
+judgment/orchestration; sonnet for mechanical), `tools` (least-privilege — a
+critic gets NO Write/Edit). Body, in this order:
+1. **Role** — one paragraph: what it is, who it answers to.
+2. **Reuse map** — what it composes (Step 1).
+3. **HARD RULES** — the falsifiable constraints ("violating these fails the
+   deliverable"): no-fabrication, sourced numbers, no placeholders, HITL gates.
+4. **Phased workflow** — intake → (parallel fan-out, ONE message many Task
+   calls) → synthesize. For fan-out, make each lane STATELESS (only its own
+   input) and give it a CLI/REST fallback for any MCP it needs.
+5. **Acceptance check** — a runnable pass/fail definition of "done." This is what
+   makes the agent delegable; if you can't write it, the agent isn't ready.
+
+## Step 3 — Smoke-test (minimal input, reconcile to raw)
+Run the agent on the SMALLEST real input (1–2 items). Then **reconcile every
+headline number against the raw source it came from** — never trust the agent's
+own summary (sub-agent-claim rule). A smoke test that isn't reconciled proves
+nothing.
+
+## Step 4 — Harden from findings (targeted edits, not rebuilds)
+Each smoke-test finding earns the SMALLEST possible edit to the agent (or the
+skill it wraps) — an Edit, not a rewrite. Fix wrong assumptions at their source
+(the underlying skill), not just in the agent.
+
+## Step 5 — Stress-test the risky mechanism
+Identify the ONE thing the smoke test did NOT prove and test it explicitly:
+- Fan-out agents → run enough items to prove real parallel Task fan-out (verify
+  parallelism by **wall-clock arithmetic**: total vs sum-of-lanes; if total <
+  sum, they ran concurrently). Read the OUTPUT DIR for progress, never the
+  transcript (context overflow). Confirm the gate/cap paths fire (e.g. anti-ICP,
+  error lanes).
+- Design each lane to persist expensive raw state to disk BEFORE synthesis, so a
+  session-limit cut-off mid-run is recoverable.
+
+## Step 6 — Codify findings into skill + memory
+Every non-obvious finding from Steps 3–5 goes into the underlying skill's SKILL.md
+AND the `project_authored_agents.md` memory entry (status + gotchas + the reusable
+pattern), so the next agent inherits it. Do this IN-session, not "later."
+
+## Step 7 — Wire the 4 discoverability layers
+1. **Agents catalog** — `~/.claude/agents/README.md` (now auto-regenerated by the
+   `agents-catalog-sync` PostToolUse hook when you Write the .md; verify it appears).
+2. **Memory** — add/refresh the entry in `project_authored_agents.md`.
+3. **Notion Skills Registry** (`YOUR-NOTION-DB-ID`) — a row
+   with Category, Project, Runtime=Claude Code, Description flagged "AGENT".
+4. **che-brain** — `capture_thought(source="agent_registry")` with what/invoke/guardrails.
+
+## Acceptance check (this skill's own "done")
+New agent file exists with all 5 body sections + a runnable acceptance check;
+skill-vs-agent test stated; smoke-tested with numbers reconciled to raw; the one
+risky mechanism stress-tested; findings codified into skill+memory; all 4 layers
+wired (catalog shows it, memory entry present, Registry row created, che-brain
+captured). Exit clean only when all hold.
+
+## Notes
+- **Model & least-privilege:** opus for orchestration/judgment, sonnet for
+  mechanical; a critic agent gets Read+Grep+Bash and NO Write/Edit by design.
+- **Don't delegate agent-authoring to the MCP-free executor** if the agent needs
+  an MCP (DataForSEO etc.) — those stay LOCAL.
+- Lineage + the exact gotchas each of the 3 exemplars taught: memory
+  `project_authored_agents.md`.
