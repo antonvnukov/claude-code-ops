@@ -1,0 +1,23 @@
+{
+  "_comment": "Fragment for ~/.claude/settings.json — merge into your existing hooks block. Matchers/paths: adjust to taste.",
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/session-start-marker.sh" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Write|Edit|NotebookEdit|Task",
+        "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/claim-gate.py" } ] },
+      { "matcher": "Write",
+        "hooks": [ { "type": "command", "command": "python3 ~/.claude/hooks/retro-gate.py" } ] }
+    ],
+    "Stop": [
+      { "hooks": [
+        { "type": "command", "command": "python3 ~/.claude/hooks/close-retro-stop-gate.py" },
+        { "type": "command", "command": "python3 ~/.claude/hooks/close-asset-audit-gate.py" }
+      ] }
+    ],
+    "SessionEnd": [
+      { "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/auto-release-session.sh" } ] }
+    ]
+  }
+}

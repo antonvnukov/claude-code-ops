@@ -71,7 +71,8 @@ See [`CHAINS.md`](CHAINS.md) for the full close-session chain — the flagship o
 
 `retro-gate.py` · `close-retro-stop-gate.py` · `claim-gate.py` · `close-asset-audit-gate.py` ·
 `session-start-marker.sh` · `auto-release-session.sh` — the mechanical spine. Wire them in
-`settings.json` (PreToolUse / Stop / SessionStart) per each file's header comment.
+`settings.json` — see [`examples/settings-example.json`](examples/settings-example.json) for the exact
+PreToolUse / Stop / SessionStart mapping.
 
 ## Install
 
