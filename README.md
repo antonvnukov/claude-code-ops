@@ -1,5 +1,7 @@
 # claude-code-ops
 
+[![lint](https://github.com/antonvnukov/claude-code-ops/actions/workflows/lint.yml/badge.svg)](https://github.com/antonvnukov/claude-code-ops/actions/workflows/lint.yml)
+
 **How I run 10–20 parallel Claude Code sessions a day without losing work.**
 
 I'm [Anton Vnukov](https://www.linkedin.com/in/antonvnukov/) — 20+ years in sales, now building
@@ -26,6 +28,11 @@ The fix each time was mechanical enforcement:
 
 The pattern generalizes: *if a discipline matters, encode it as a gate the harness enforces,
 not a paragraph the model reads.*
+
+![The gates firing for real](docs/demo-gates.svg)
+
+*(Captured from a live session — the claim-gate blocked the very session that was packaging
+this repo. The merchandise demos itself.)*
 
 ## The session lifecycle
 
@@ -77,10 +84,26 @@ PreToolUse / Stop / SessionStart mapping.
 ## Install
 
 ```bash
-git clone <this repo>
-cp -R skills/* ~/.claude/skills/
-cp hooks/*   ~/.claude/hooks/     # then register in ~/.claude/settings.json
+git clone https://github.com/antonvnukov/claude-code-ops && cd claude-code-ops
+./install.sh    # copies skills + hooks into ~/.claude, prints the settings fragment to merge
 ```
+
+Manual: copy `skills/*` and `hooks/*` into `~/.claude/`, then merge
+[`examples/settings-example.json`](examples/settings-example.json) into `~/.claude/settings.json`.
+
+### How the skills compose
+
+`close-session` is the orchestrator — it invokes `session-retro`, `capture-progress`,
+`close-asset-audit`, `skill-forge`, and `release`. `mid-sess-check` invokes `checkpoint`
+(which chains `capture-progress`). `session-open` pairs with `claim`. Everything else is
+standalone. Install the whole set; the chain degrades gracefully if a piece is missing.
+
+### Frontmatter schema (the extra fields you'll notice)
+
+`uses:`/`requires:` — skill dependencies · `bets:` — which business bet the skill serves
+(kept empty here) · `maturity:` — draft → assembled → proven, promoted only after repeated
+real-session use · `chain:` — what the skill consumes/produces and where it sits in a
+pipeline (see [`CHAINS.md`](CHAINS.md)).
 
 ## Adapt to your stack
 
